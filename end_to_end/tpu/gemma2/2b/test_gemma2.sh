@@ -17,10 +17,13 @@ export MODEL_VARIATION='2b'
 # After downloading checkpoints, copy them to GCS bucket at $CHKPT_BUCKET \
 # Non-Googlers please remember to use separate GCS paths for uploading model weights from kaggle ($CHKPT_BUCKET) and MaxText compatible weights ($MODEL_BUCKET).
 # Non-Googlers please remember to point these variables to GCS buckets that you own, this script uses internal buckets for testing.
-export CHKPT_BUCKET=gs://maxtext-gemma/gemma2/flax
-export MODEL_BUCKET=gs://maxtext-gemma/gemma2
-python MaxText/convert_gemma2_chkpt.py --base_model_path ${CHKPT_BUCKET}/${MODEL_VARIATION} --maxtext_model_path ${MODEL_BUCKET}/${MODEL_VARIATION}/${idx} --model_size ${MODEL_VARIATION}
+# export CHKPT_BUCKET=gs://maxtext-gemma/gemma2/flax
+# export MODEL_BUCKET=gs://maxtext-gemma/gemma2
+export CHKPT_PATH=/tmp/gemma2-2b/gemma2-2b/
+export MODEL_PATH=/tmp/maxtext/gemma2
+mkdir -p ${MODEL_PATH}
 
+python MaxText/convert_gemma2_chkpt.py --base_model_path ${CHKPT_PATH} --maxtext_model_path  ${MODEL_PATH}/${MODEL_VARIATION}/${idx} --model_size ${MODEL_VARIATION}
 
 # Non-Googlers please remember to point `DATASET_PATH` to the GCS bucket where you have your training data
 export DATASET_PATH=gs://maxtext-dataset
