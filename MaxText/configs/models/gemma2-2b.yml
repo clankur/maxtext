@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # model config for gemma-2B
+model_name: "default"
 
 base_emb_dim: 2304
 base_num_query_heads: 8
@@ -31,3 +32,47 @@ attn_logits_soft_cap: 50.0
 sliding_window_size: 4096
 use_post_attn_norm: True
 use_post_ffw_norm: True
+
+# Output directory
+# Create a GCS bucket, e.g. my-maxtext-outputs and set this to "gs://my-maxtext-outputs/"
+base_output_directory: "gs://maxtext_out"
+
+# Dataset
+per_device_batch_size: 12.0
+expansion_factor_real_data: -1 # if -1 then all hosts will load real data, else total_hosts//expansion_factor_real_data will pull data from GCS.
+eval_per_device_batch_size: 0
+max_corpus_chars: 10_000_000
+train_data_column: 'text'
+eval_data_column: 'text'
+# dataset_type must be synthetic, hf, grain, tfds
+# details in: https://github.com/google/maxtext/blob/main/getting_started/Data_Input_Pipeline.md
+dataset_type: tfds
+# for TFDS input pipeline (dataset_type=tfds)
+dataset_path: "" # your path given as argument in download_dataset.sh, e.g. "gs://my-maxtext-dataset/"
+dataset_name: 'c4/en:3.0.1'
+eval_dataset_name: 'c4/en:3.0.1'
+eval_split: 'validation'
+# for HuggingFace input pipeline (dataset_type=hf)
+hf_path: ''
+hf_data_dir: ''
+hf_train_files: ''
+hf_eval_split: ''
+hf_eval_files: ''
+hf_access_token: ''
+#
+
+################################## CHECKPOINTING ##################################
+# Checkpointing makes the following choices in the following order, starting with (1):
+#   (1) If there is already a checkpoint for this run_name, we load the latest entire checkpoint.
+#     This ensures if we're resuming a run after preemption or hardware failure we lose minimum state.
+#   (2) Same priority and mutually exclusive -- you can't set both!
+#      * If load_parameters_path is set, we load a parameter only checkpoint from that path.
+#      * If load_full_state_path is set, we load a full state checkpoint from that path.
+#   (3) We don't load a checkpoint and initialize state instead!
+
+# Loads a just parameters from a specific directory
+# e.g. gs://my-base-output-directory/my-previous-run-name/checkpoints/items/NUMBER or NUMBER/items
+load_parameters_path: ""
+# Loads a full checkpoint including optimizer state and step count from a specific directory
+# e.g. gs://my-base-output-directory/my-previous-run-name/checkpoints/items/NUMBER or NUMBER/items
+load_full_state_path: ""
